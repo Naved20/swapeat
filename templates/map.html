@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Scan</title>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+       
+        body {
+                  margin: 0;
+                  background-color: yellow;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  min-height: 100vh;
+                  padding-bottom: 70px; /* To prevent content from being hidden behind navbar */
+                  font-family: Arial, sans-serif;
+
+        }
+        
+           /* Responsive image inside the popup */
+        .popup-content {
+            text-align: center;
+            max-width: 200px;
+        }
+        .popup-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .popup-content p {
+            font-size: 14px;
+            color: #555;
+            margin: 5px 0;
+        }
+        .popup-content h4 {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .container{
+            display: flex;
+            margin-right: 0px;
+        }
+
+        .main-box {
+            background: #ff6f61;
+            padding: 20px;
+            border: solid 2px black;
+            border-radius: 20px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .search-box {
+            width: 50%;
+            height: 300px;
+
+            background: white;
+            padding: 10px;
+            margin: auto;
+            border-radius: 10px;
+        }
+        input {
+            width: 80%;
+            padding: 5px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+        }
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        .tag {
+            background: #6c63ff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        #map {
+            z-index: 1;
+            width: 100%;
+            height: 300px;
+            background: url('https://maps.googleapis.com/maps/api/staticmap?center=Bhopal&zoom=12&size=600x300') no-repeat center center/cover;
+            border-radius: 10px;
+            margin: 15px;
+        }
+         .buttons {
+                margin-top: 80px;
+                margin-bottom: 80px;
+                margin-right: auto; 
+                margin-left: 50px;
+                display: flex;
+                border-start-start-radius: 40px;
+                border-end-start-radius: 40px;
+                flex-direction: column;
+                justify-content: center;
+                background-color: #7d40ff;
+                padding: 20px;  
+                gap: 20px;
+            }
+
+        .switch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .toggle-btn {
+            width: 100px;
+            height: 50px;
+            background: gray;
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        .toggle-btn::before {
+            content: "";
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 70%;
+            position: absolute;
+            top:50%;
+            left: 10px;
+            transform: translateY(-50%);
+            transition: 0.3s;
+        }
+        .active {
+            background:lightgreen;
+        }
+        .active::before {
+            left: calc(100% - 23px);
+        }
+   
+    .profile{
+
+    display: flex;
+    
+    flex-direction: column;
+    
+    justify-content: center;
+    
+    text-align:center;
+
+        }
+        body div h1 {
+            font-size:80px;
+
+            color: black;
+
+            margin-top: 30px;
+        }
+
+        .scan{
+        font-size:80px;
+        color: red;
+    }
+
+        .profile img {
+
+            cursor: pointer;
+
+            position: absolute;
+
+            top: 40px;
+
+            right: 40px;
+
+            width: 60px;
+
+            height: 60px;
+
+            border-radius: 50%;
+
+            overflow: hidden;
+
+            border: 2px solid black;
+
+        }
+
+        .menu {
+
+            cursor: pointer;
+
+            position: absolute;
+
+            top: 90px;
+
+            right: 20px;
+
+            width: 200px;
+
+            background: white;
+
+            border-radius: 10px;
+
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+            opacity: 0;
+
+            visibility:hidden;
+
+            transform: translateY(-10px);
+
+            transition: opacity 0.3s ease, transform 0.3s ease;
+
+            z-index: 1000;
+
+        }
+
+    
+
+        .menu.show {
+            z-index: 100;
+
+            opacity: 1;
+
+            visibility: visible;
+
+            transform: translateY(0);
+
+        }
+
+    
+
+        .menu a {
+
+            display: block;
+
+            padding: 10px 15px;
+
+            text-decoration: none;
+
+            color: black;
+
+            font-size: 16px;
+
+            transition: background 0.3s;
+
+            text-align: left;
+
+    
+
+        }
+
+    
+
+        .menu a:hover {
+
+            cursor: pointer;
+
+            background: lightgray;
+
+        }
+
+            /* Bottom Navigation Bar */
+         .nav-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .navbar {z-index: 1;
+            display: flex;
+            align-items: center;
+            margin:20px;
+            background: linear-gradient(to right, red, orange);
+            padding: 12px 20px;
+            border-radius: 40px;
+            box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            gap: 20px;
+        }
+
+        .nav-item {
+            z-index: 1;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            background-color: transparent;
+            color: rgb(0, 0, 0);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, background 0.3s;
+        }
+
+        .nav-item:hover {
+            background-color: lightgreen;
+            transform: scale(1.2);
+        }
+        .navbar a {
+          text-decoration: none;
+          color: inherit;       
+        }
+        .chat-button {
+            margin-top:30px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            background: white;
+            color: black;
+            padding: 8px 12px;
+            padding-bottom: 15px;
+            padding-top:15px ;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        
+        }
+        .chat-button a {
+            text-decoration: none;
+            color: inherit;
+        }
+       
+        .chat-button:hover {
+            background: lightgreen;
+            transform: scale(1.1);
+        }
+
+     /* Responsive Design */
+     @media (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .divider {
+                width: 100%;
+                height: 3px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+
+        <h1> <spam class="scan"> • </spam> Live Scan</h1>       
+       
+        <div class="profile">
+
+                    <img src="https://static.vecteezy.com/system/resources/previews/011/490/381/original/happy-smiling-young-man-avatar-3d-portrait-of-a-man-cartoon-character-people-illustration-isolated-on-white-background-vector.jpg" alt="User" onclick="toggleMenu()">
+
+                    <div class="menu" id="menu">
+
+                        <a href="#">🔵 Profile</a>
+
+                        <a href="#">⭐ Favorite Peoples</a>
+
+                        <a href="#">💡 Personalization</a>
+
+                        <a href="#">🟡 Swap Eat +</a>
+
+                        <a href="#">🚫 Blocked Users</a>
+
+                        <a href="#">⚙️ Settings</a>
+
+                        <a href="#">🔗 Invite</a>
+
+                        <a href="{% url 'home' %}">↪ Logout</a>
+
+                    </div>
+
+            </div>
+
+    
+
+        </div>
+
+  <section class="container">
+
+        <div class="main-box">
+            <div class="search-box">
+                <label>Select Hyper Local Distance</label>
+                <input type="range" min="1" max="10" value="3">
+                <br>
+                <input type="text" placeholder="kya khaaoge ji..">
+                <div class="tags">
+                    <span class="tag">Hara Bhara Kabab</span>
+                    <span class="tag">Burger</span>
+                    <span class="tag">Noodles</span>
+                    <span class="tag">Aloo Paratha</span>
+                    <span class="tag">Fried Bhindi Sabji</span>
+                    <span class="tag">Poha</span>
+                    <span class="tag">Dhokla Jalebi</span>
+                    <span class="tag">Matar Paneer</span>
+                    <span class="tag">Daal Bati</span>
+                </div>
+            </div>
+
+           <div id="map" ></div>
+
+        </div>
+    </div>
+    <div class="buttons">
+        <div class="switch">
+            <div class="toggle-btn" id="scan-toggle" style=" font-size: larger;"></div>
+             <h3 style="color: white;">Scan Now</h3>
+        </div>
+        <div class="switch">
+            <div class="toggle-btn" id="meal-toggle"></div>
+            <h3 style="color: white;">My meal</h3>
+            
+        </div>
+    </div>
+        </section>
+
+          <!-- Bottom Nav Bar -->
+          <section class="nav-bottom">
+            <div class="navbar">
+                <div class="nav-item">
+                  <a href="{% url 'post' %}"><i class="fas fa-home"></i></a> 
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'explore' %}"><i class="fas fa-compass"></i></a>  
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'post_food' %}"><i class="fas fa-plus"></i></a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'notification' %}"><i class="fas fa-bell"></i></a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'map' %}"><i class="fas fa-map"></i></a>
+                </div>
+            </div>
+            <div class="chat-button">
+                <a href="{% url 'chat' %}"><i class="fas fa-comments"></i> Chat </a>
+            </div>
+        </section>
+    
+        
+        
+ 
+
+    <script>
+
+            function toggleMenu() {
+                
+                var menu = document.getElementById("menu");
+                
+                menu.classList.toggle("show");
+                
+                }
+                
+                document.addEventListener("click", function (event) {
+                
+                var menu = document.getElementById("menu");
+                
+                var profileImg = document.querySelector(".profile img");
+                
+                
+                
+                // Check if the clicked area is NOT inside the menu or the profile image
+                
+                if (!menu.contains(event.target) && event.target !== profileImg) {
+                
+                menu.classList.remove("show");
+                
+                }
+                
+                });
+
+
+       var map = L.map('map').setView([20.5937, 78.9629], 5); // Default India
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var foodPosts = JSON.parse('{{ food_posts|escapejs }}');  // Ensure valid JSON
+
+    foodPosts.forEach(post => {
+        if (post.latitude && post.longitude) {
+            var formattedDate = new Date(post.created_at).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            });
+
+            var marker = L.marker([post.latitude, post.longitude]).addTo(map);
+            marker.bindPopup(`
+                <div style="text-align: center; max-width: 200px;">
+                    <img src="/media/${post.photo}" alt="Food Image" style="max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 5px;">
+                    <h4 style="margin: 5px 0; font-size: 16px; color: #333;">${post.name}</h4>
+                    <p style="font-size: 14px; color: #555; margin: 5px 0;"><strong>Radius:</strong> ${post.radius} km</p>
+                    <p style="font-size: 14px; color: #777;"><strong>Posted on:</strong> ${formattedDate}</p>
+                </div>
+            `);
+        }
+    });
+
+    // Toggle buttons for Scan and Meal
+    document.getElementById("scan-toggle").addEventListener("click", function() {
+        this.classList.toggle("active");
+    });
+
+    document.getElementById("meal-toggle").addEventListener("click", function() {
+        this.classList.toggle("active");
+    });
+    </script>
+
+</body>
+</html>
+
