@@ -155,9 +155,10 @@ LOGOUT_REDIRECT_URL = '/login/'  # Redirect after logout
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ALLOWED_HOSTS = [
-    'grieving-timmie-swapeat-5e816b1d.koyeb.app',
-    'localhost',
-    '127.0.0.1',
+    "grieving-timmie-swapeat-5e816b1d.koyeb.app",  # Add your Koyeb app domain
+    "toxic-ilse-piyush105454-c639ba90.koyeb.app",  # Keep any existing allowed hosts
+    "localhost",
+    "127.0.0.1",
 ]
 
 
