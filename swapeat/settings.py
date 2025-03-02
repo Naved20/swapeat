@@ -110,9 +110,11 @@ LOGOUT_REDIRECT_URL = '/login/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://grieving-timmie-swapeat-5e816b1d.koyeb.app',
-    'https://toxic-ilse-piyush105454-c639ba90.koyeb.app',
+ALLOWED_HOSTS = [
+    'toxic-ilse-piyush105454-c639ba90.koyeb.app',
+    'localhost',
+    '127.0.0.1',
+    'grieving-timmie-swapeat-5e816b1d.koyeb.app'
 ]
 
 # Email Configuration
