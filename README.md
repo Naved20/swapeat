@@ -15,7 +15,7 @@ SwapEat is a Django-based web platform that allows users to swap and share food 
 To set up the project locally, follow these steps:
 
 ```sh
-git clone <your-repo-url>
+git clone <https://github.com/Naved20/swapeat>
 cd <swapeat>
 python -m venv env
 source env/bin/activate  # On Windows use `env\Scripts\activate`
