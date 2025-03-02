@@ -154,7 +154,12 @@ LOGOUT_REDIRECT_URL = '/login/'  # Redirect after logout
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['grieving-timmie-swapeat-5e816b1d.koyeb.app', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'grieving-timmie-swapeat-5e816b1d.koyeb.app',
+    'localhost',
+    '127.0.0.1',
+]
+
 
 CSRF_TRUSTED_ORIGINS = [
          'https://grieving-timmie-swapeat-5e816b1d.koyeb.app'
